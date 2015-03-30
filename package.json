@@ -1,0 +1,32 @@
+{
+  "name": "lintscreen",
+  "version": "0.0.0",
+  "description": "An eslint plugin to autocorrect minor code errors",
+
+  "author":   "Maxwell Huang-Hobbs <mhuan13@gmail.com>",
+  "license":  "GPLv3",
+  "bugs":     "https://github.com/Adjective-Object/lintscreen/issues",
+  "homepage": "https://github.com/Adjective-Object/lintscreen",
+
+  "repository": {
+     "type": "git",
+     "url":   "https:github.com/Adjective-Object/lintscreen.git"
+  },
+
+  "engines": {
+    "node": "^0.12.0",
+    "npm":  ">=2.1"
+  },
+
+  "scripts": {
+    "test": "grunt test"
+  },
+
+  "dependencies": {
+    "eslint": "^0.17.1"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-continue": "^0.1.0"
+  }
+}
