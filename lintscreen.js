@@ -24,7 +24,9 @@ String.prototype.endsWith = function(suffix) {
 
 
 
-function insertChar(state, line, column, str) {
+function spliceAction(state, line, column, str, idx) {
+    if (idx == undefined) { idx = 0; }
+
     line --;
     var out = "";
 
@@ -37,13 +39,7 @@ function insertChar(state, line, column, str) {
     var sline = state.buffer[line]
     //out += line + " " + sline + "\n"
 
-    if (str < 0) {
-        sline = sline.splice(offset + column, Math.abs(str), "")
-        state.inserts[line].push((column, str))
-    } else {
-        sline = sline.splice(offset + column, 0, str)
-        state.inserts[line].push((column, str.length))
-    }
+    sline = sline.splice(offset + column - 1, idx, str)
 
     //out += line + " " + sline + "\n"
     state.buffer[line] = sline
@@ -93,33 +89,46 @@ console.log(process.cwd());
 function switchOnType(state, message) {
     switch (message.ruleId) {
     case 'comma-dangle':
-        return insertChar(
+        return spliceAction(
                     state,
                     message.line,
                     message.column,
-                    -1);
-        break;
+                    "", 1);
+
     case 'no-trailing-spaces':
         return dropSpaces(
                     state,
                     message.line,
                     message.column)
-        break;
+    
     case 'semi':
-        return insertChar(
+        return spliceAction(
                     state,
                     message.line,
                     message.column,
-                    ';');
-        break;
+                    ';', 0);
+    
     case 'quotes':
         return fixDoubleQuotes(
                     state,
                     message.line);
-        break;
+    
     case 'strict':
         state.needsStrict = true;
         break;
+
+    case 'prefer-const':
+        return spliceAction(state, message.line, message.column-4, 'const', 'let'.length);
+    
+    case 'no-var':
+        return spliceAction(state, message.line, message.column, 'let', 'var'.length);
+    
+    case 'no-array-constructor':
+        return spliceAction(state, message.line, message.column, '= []', '= Array()'.length);
+    
+    case 'eqeqeq':
+        return spliceAction(state, message.line, message.column + 2, '=', 0);
+
     default:
         return false, ""
     }
@@ -180,6 +189,4 @@ function eslintParser(results) {
     return output + "\n" + failed_output;
 }
 
-module.exports = {
-    parser: eslintParser
-}
+module.exports = eslintParser
